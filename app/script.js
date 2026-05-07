@@ -19,6 +19,7 @@ const nextGoal = document.querySelector("#nextGoal");
 const locateBtn = document.querySelector("#locateBtn");
 const resetBtn = document.querySelector("#resetBtn");
 const randomBtn = document.querySelector("#randomBtn");
+const osakaCenter = [34.66, 135.505];
 
 const fallbackBoundary = {
   name: "大阪市内",
@@ -268,10 +269,10 @@ function initMap() {
   }
 
   osakaMap = L.map("osakaMap", {
-    center: [34.66, 135.505],
+    center: osakaCenter,
     zoom: 12,
-    minZoom: 11,
-    maxZoom: 17,
+    minZoom: 5,
+    maxZoom: 18,
     zoomControl: true,
   });
 
@@ -282,7 +283,6 @@ function initMap() {
 
   const osakaBounds = L.latLngBounds(...getBoundaryBounds());
   osakaMap.fitBounds(osakaBounds, { padding: [16, 16] });
-  osakaMap.setMaxBounds(osakaBounds.pad(0.45));
 
   activeBoundary.polygons.forEach((polygon) => {
     L.polygon(polygon, {
@@ -303,6 +303,29 @@ function initMap() {
 
     cellLayers.set(cell.id, layer);
   });
+
+  addOsakaHomeControl();
+}
+
+function addOsakaHomeControl() {
+  const control = L.control({ position: "topright" });
+
+  control.onAdd = () => {
+    const button = L.DomUtil.create("button", "osaka-home-control");
+    button.type = "button";
+    button.title = "大阪市中心に戻る";
+    button.setAttribute("aria-label", "大阪市中心に戻る");
+    button.textContent = "大阪";
+
+    L.DomEvent.disableClickPropagation(button);
+    L.DomEvent.on(button, "click", () => {
+      osakaMap.setView(osakaCenter, 12);
+    });
+
+    return button;
+  };
+
+  control.addTo(osakaMap);
 }
 
 function drawStats() {

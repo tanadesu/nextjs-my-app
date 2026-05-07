@@ -1,0 +1,390 @@
+:root {
+  color-scheme: light;
+  --bg: #f4f0e8;
+  --panel: #fffdf8;
+  --ink: #202124;
+  --muted: #6c6a63;
+  --line: #d7d1c3;
+  --water: #8ac7d6;
+  --land: #f7e4b6;
+  --visited: #e95f3f;
+  --visited-2: #f5a63f;
+  --focus: #277c74;
+  --shadow: 0 18px 55px rgba(46, 39, 24, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background:
+    linear-gradient(115deg, rgba(138, 199, 214, 0.34), transparent 42%),
+    linear-gradient(290deg, rgba(233, 95, 63, 0.18), transparent 46%),
+    var(--bg);
+  font-family:
+    Arial,
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    Meiryo,
+    sans-serif;
+}
+
+button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--focus);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(39, 124, 116, 0.22);
+}
+
+button:focus-visible,
+.ward-chip:focus-visible {
+  outline: 3px solid rgba(39, 124, 116, 0.35);
+  outline-offset: 3px;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 22px;
+  width: min(1180px, calc(100% - 32px));
+  min-height: calc(100vh - 32px);
+  margin: 16px auto;
+}
+
+.map-panel,
+.side-panel {
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid rgba(215, 209, 195, 0.86);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.map-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 14px;
+}
+
+.eyebrow,
+.label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  line-height: 1.08;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 3.2vw, 3.25rem);
+}
+
+h2 {
+  font-size: 1.45rem;
+}
+
+.score-card {
+  display: grid;
+  place-items: center;
+  min-width: 112px;
+  min-height: 74px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff8e9;
+}
+
+.score-card span {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.score-card small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.progress-wrap {
+  height: 12px;
+  margin: 0 24px 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8dfcf;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--visited), var(--visited-2));
+  transition: width 260ms ease;
+}
+
+.map-wrap {
+  flex: 1;
+  min-height: 520px;
+  padding: 8px 16px 20px;
+}
+
+#osakaMap {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #dceadf;
+}
+
+.leaflet-container {
+  font: inherit;
+}
+
+.leaflet-control-attribution {
+  font-size: 11px;
+}
+
+.ward-map-label {
+  display: grid;
+  place-items: center;
+  min-width: 72px;
+  min-height: 26px;
+  padding: 3px 8px;
+  border: 1px solid rgba(32, 33, 36, 0.16);
+  border-radius: 999px;
+  color: #26241f;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 6px 16px rgba(32, 33, 36, 0.18);
+  font-size: 0.82rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ward-map-label.visited {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--visited), var(--visited-2));
+}
+
+.map-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: inherit;
+  padding: 24px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.7;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px;
+}
+
+.status-block {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+#message {
+  min-height: 48px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 104px;
+  gap: 10px;
+}
+
+.secondary {
+  color: var(--ink);
+  background: #e4ddce;
+}
+
+.secondary:hover {
+  box-shadow: 0 10px 22px rgba(32, 33, 36, 0.12);
+}
+
+.text-button {
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--focus);
+  background: transparent;
+  border: 1px solid var(--line);
+}
+
+.text-button:hover {
+  box-shadow: none;
+  background: #f5efe3;
+}
+
+.ward-list-wrap {
+  min-height: 0;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ward-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-height: calc(100vh - 304px);
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.ward-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff8e9;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+.ward-chip::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #cabfAA;
+}
+
+.ward-chip.visited {
+  color: #fff;
+  background: linear-gradient(135deg, var(--visited), var(--visited-2));
+  border-color: transparent;
+}
+
+.ward-chip.visited::after {
+  background: #fff;
+}
+
+.stat-chip {
+  display: grid;
+  gap: 4px;
+  min-height: 52px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff8e9;
+}
+
+.stat-chip span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.stat-chip strong {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 860px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    width: min(100% - 20px, 680px);
+    margin: 10px auto;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    padding: 18px 16px 12px;
+  }
+
+  .score-card {
+    min-width: 90px;
+    min-height: 64px;
+  }
+
+  .progress-wrap {
+    margin-inline: 16px;
+  }
+
+  .map-wrap {
+    min-height: 430px;
+    padding: 6px 10px 14px;
+  }
+
+  #osakaMap {
+    min-height: 430px;
+  }
+
+  .side-panel {
+    padding: 16px;
+  }
+
+  .ward-list {
+    max-height: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar {
+    flex-direction: column;
+  }
+
+  .score-card {
+    width: 100%;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .ward-list {
+    grid-template-columns: 1fr;
+  }
+}

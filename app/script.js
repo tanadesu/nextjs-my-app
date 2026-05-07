@@ -344,9 +344,11 @@ function toggleCell(id, forceVisited = null) {
 
 function renderState() {
   const count = visited.size;
-  visitedCount.textContent = count;
-  totalCount.textContent = `/ ${cells.length} マス`;
-  progressBar.style.width = `${(count / cells.length) * 100}%`;
+  const percent = cells.length ? (count / cells.length) * 100 : 0;
+  const displayPercent = percent < 10 && percent > 0 ? percent.toFixed(1) : Math.round(percent).toString();
+  visitedCount.textContent = `${displayPercent}%`;
+  totalCount.textContent = "制圧率";
+  progressBar.style.width = `${percent}%`;
 
   cells.forEach((cell) => {
     const layer = cellLayers.get(cell.id);
@@ -359,14 +361,13 @@ function renderState() {
     return;
   }
 
-  const remaining = cells.length - count;
-  const next = Math.min(cells.length, Math.max(1, Math.ceil((count + 1) / 10) * 10));
-  nextGoal.textContent = `${next}マスまであと${next - count}マス`;
+  const nextPercent = Math.min(100, Math.max(1, Math.ceil(percent + 1)));
+  nextGoal.textContent = `${nextPercent}%まであと${Math.max(0, nextPercent - percent).toFixed(1)}%`;
 
   if (count === 0) {
     message.textContent = "行った場所の100mマスを地図から選ぶと色がつきます。";
   } else {
-    message.textContent = `残り${remaining}マス。海上のマスは生成しない設定です。`;
+    message.textContent = `現在の制圧率は${displayPercent}%です。海上のマスは生成しない設定です。`;
   }
 }
 

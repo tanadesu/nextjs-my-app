@@ -7,6 +7,7 @@ const cellLayers = new Map();
 let osakaMap = null;
 let activeBoundary = null;
 let boundarySource = "fallback";
+let currentLocationMarker = null;
 
 const mapElement = document.querySelector("#osakaMap");
 const wardList = document.querySelector("#wardList");
@@ -379,6 +380,28 @@ function findCellByPosition(latitude, longitude) {
   });
 }
 
+function updateCurrentLocationMarker(latitude, longitude) {
+  if (!osakaMap) return;
+
+  const position = [latitude, longitude];
+  if (currentLocationMarker) {
+    currentLocationMarker.setLatLng(position);
+  } else {
+    currentLocationMarker = L.circleMarker(position, {
+      radius: 9,
+      color: "#ffffff",
+      fillColor: "#2563eb",
+      fillOpacity: 1,
+      weight: 3,
+      opacity: 1,
+    })
+      .bindTooltip("現在地", { permanent: true, direction: "top", offset: [0, -10] })
+      .addTo(osakaMap);
+  }
+
+  currentLocationMarker.bringToFront();
+}
+
 function locate() {
   if (!navigator.geolocation) {
     message.textContent = "このブラウザでは現在地を使えません。";
@@ -397,13 +420,7 @@ function locate() {
       locateBtn.textContent = "現在地で塗る";
 
       if (osakaMap) {
-        L.circleMarker([latitude, longitude], {
-          radius: 7,
-          color: "#ffffff",
-          fillColor: "#277c74",
-          fillOpacity: 1,
-          weight: 3,
-        }).addTo(osakaMap);
+        updateCurrentLocationMarker(latitude, longitude);
         osakaMap.setView([latitude, longitude], Math.max(osakaMap.getZoom(), 14));
       }
 

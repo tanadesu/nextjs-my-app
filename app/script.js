@@ -1,4 +1,5 @@
 const gridSizeMeters = 100;
+const claimRadiusMeters = 300;
 const storageKey = "osaka-fill-game.visited-cells-100m-v2";
 const visited = new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
 const cells = [];
@@ -225,9 +226,22 @@ function getCellStyle(isVisited) {
     color: isVisited ? "#b83225" : "#277c74",
     fillColor: isVisited ? "#e95f3f" : "#f7e4b6",
     fillOpacity: isVisited ? 0.58 : 0.09,
-    opacity: isVisited ? 0.9 : 0.38,
-    weight: isVisited ? 1.2 : 0.7,
+    opacity: isVisited ? 0.9 : 0.18,
+    weight: isVisited ? 1.2 : 0.45,
   };
+}
+
+function distanceMeters(from, to) {
+  const earthRadius = 6371000;
+  const fromLat = (from[0] * Math.PI) / 180;
+  const toLat = (to[0] * Math.PI) / 180;
+  const deltaLat = ((to[0] - from[0]) * Math.PI) / 180;
+  const deltaLng = ((to[1] - from[1]) * Math.PI) / 180;
+  const a =
+    Math.sin(deltaLat / 2) ** 2 +
+    Math.cos(fromLat) * Math.cos(toLat) * Math.sin(deltaLng / 2) ** 2;
+
+  return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function generateCells() {
@@ -286,12 +300,11 @@ function initMap() {
 
   activeBoundary.polygons.forEach((polygon) => {
     L.polygon(polygon, {
-      color: "#202124",
+      color: "#dc2626",
       fillColor: "transparent",
       fillOpacity: 0,
-      opacity: 0.32,
-      weight: 1.4,
-      dashArray: "5 5",
+      opacity: 0.9,
+      weight: 3,
       interactive: false,
     }).addTo(osakaMap);
   });
@@ -363,6 +376,18 @@ function toggleCell(id, forceVisited = null) {
   renderState();
 }
 
+function claimCellsAround(latitude, longitude) {
+  const position = [latitude, longitude];
+  const claimedCells = cells.filter((cell) => distanceMeters(position, cell.center) <= claimRadiusMeters);
+  const newClaimCount = claimedCells.filter((cell) => !visited.has(cell.id)).length;
+
+  claimedCells.forEach((cell) => visited.add(cell.id));
+  save();
+  renderState();
+
+  return newClaimCount;
+}
+
 function renderState() {
   const count = visited.size;
   const percent = cells.length ? (count / cells.length) * 100 : 0;
@@ -386,7 +411,7 @@ function renderState() {
   nextGoal.textContent = `${nextPercent}%まであと${Math.max(0, nextPercent - percent).toFixed(1)}%`;
 
   if (count === 0) {
-    message.textContent = "現在地を取得した場所の100mマスだけ色がつきます。";
+    message.textContent = "現在地を取得した場所から半径300m以内の100mマスに色がつきます。";
   } else {
     message.textContent = `現在の制圧率は${displayPercent}%です。海上のマスは生成しない設定です。`;
   }
@@ -450,7 +475,9 @@ function locate() {
         return;
       }
 
-      toggleCell(cell.id, true);
+      const claimedCount = claimCellsAround(latitude, longitude);
+      message.textContent =
+        claimedCount > 0 ? `${claimedCount}マスを新しく制圧しました。` : "この周辺はすでに制圧済みです。";
     },
     () => {
       locateBtn.disabled = false;

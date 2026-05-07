@@ -297,8 +297,7 @@ function initMap() {
 
   cells.forEach((cell) => {
     const layer = L.rectangle(cell.bounds, getCellStyle(visited.has(cell.id)))
-      .bindTooltip("100mマス", { sticky: true })
-      .on("click", () => toggleCell(cell.id))
+      .bindTooltip("現在地でのみ制圧できます", { sticky: true })
       .addTo(osakaMap);
 
     cellLayers.set(cell.id, layer);
@@ -329,7 +328,7 @@ function toggleCell(id, forceVisited = null) {
   const cell = cells.find((item) => item.id === id);
   if (!cell) return;
 
-  const shouldVisit = forceVisited ?? !visited.has(id);
+  const shouldVisit = forceVisited ?? true;
   if (shouldVisit) {
     visited.add(id);
     message.textContent = "100mマスを塗りました。";
@@ -365,7 +364,7 @@ function renderState() {
   nextGoal.textContent = `${nextPercent}%まであと${Math.max(0, nextPercent - percent).toFixed(1)}%`;
 
   if (count === 0) {
-    message.textContent = "行った場所の100mマスを地図から選ぶと色がつきます。";
+    message.textContent = "現在地を取得した場所の100mマスだけ色がつきます。";
   } else {
     message.textContent = `現在の制圧率は${displayPercent}%です。海上のマスは生成しない設定です。`;
   }
@@ -409,7 +408,7 @@ function locate() {
       }
 
       if (!cell) {
-        message.textContent = "現在地が大阪市内の100mマスとして判定できませんでした。地図から手動で塗れます。";
+        message.textContent = "現在地が大阪市内の100mマスとして判定できませんでした。";
         return;
       }
 
@@ -418,7 +417,7 @@ function locate() {
     () => {
       locateBtn.disabled = false;
       locateBtn.textContent = "現在地で塗る";
-      message.textContent = "位置情報を取得できませんでした。地図から手動で塗れます。";
+      message.textContent = "位置情報を取得できませんでした。";
     },
     { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 },
   );
@@ -432,7 +431,7 @@ function suggestRandomCell() {
   }
 
   const cell = remaining[Math.floor(Math.random() * remaining.length)];
-  message.textContent = "次の候補マスへ移動しました。";
+  message.textContent = "未制圧の候補マスへ移動しました。塗るには現地で現在地取得が必要です。";
   if (osakaMap) osakaMap.flyTo(cell.center, 15, { duration: 0.55 });
 }
 

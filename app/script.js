@@ -297,9 +297,7 @@ function initMap() {
   });
 
   cells.forEach((cell) => {
-    const layer = L.rectangle(cell.bounds, getCellStyle(visited.has(cell.id)))
-      .bindTooltip("現在地でのみ制圧できます", { sticky: true })
-      .addTo(osakaMap);
+    const layer = L.rectangle(cell.bounds, getCellStyle(visited.has(cell.id))).addTo(osakaMap);
 
     cellLayers.set(cell.id, layer);
   });

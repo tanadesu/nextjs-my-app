@@ -1,0 +1,25 @@
+{
+  "name": "大阪陣取り合戦",
+  "short_name": "大阪陣取り",
+  "description": "大阪市内を現在地で制圧していく陣取りマップゲーム",
+  "lang": "ja",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f4f0e8",
+  "theme_color": "#277c74",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

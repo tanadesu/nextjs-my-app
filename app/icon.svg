@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="大阪陣取り合戦">
+  <rect width="512" height="512" rx="112" fill="#277c74"/>
+  <path fill="#f4f0e8" d="M116 116h280v280H116z"/>
+  <path fill="#e95f3f" d="M116 116h93v93h-93zM303 116h93v93h-93zM209 209h94v94h-94zM116 303h93v93h-93zM303 303h93v93h-93z"/>
+  <path fill="#f5a63f" d="M209 116h94v93h-94zM116 209h93v94h-93zM303 209h93v94h-93zM209 303h94v93h-94z"/>
+  <circle cx="256" cy="256" r="58" fill="#2563eb" stroke="#fff" stroke-width="22"/>
+</svg>

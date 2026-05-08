@@ -12,6 +12,7 @@ let osakaMap = null;
 let activeBoundary = null;
 let boundarySource = "fallback";
 let currentLocationMarker = null;
+let recommendedSpotMarker = null;
 let supabaseClient = null;
 let playerId = localStorage.getItem(playerIdKey);
 let playerNameValue = localStorage.getItem(playerNameKey) || "";
@@ -824,7 +825,30 @@ function suggestRandomCell() {
 
 function focusRecommendedSpot(spot) {
   message.textContent = `${spot.name}: ${spot.description}`;
+  updateRecommendedSpotMarker(spot);
   if (osakaMap) osakaMap.flyTo(spot.center, 15, { duration: 0.55 });
+}
+
+function updateRecommendedSpotMarker(spot) {
+  if (!osakaMap) return;
+
+  if (recommendedSpotMarker) {
+    recommendedSpotMarker.setLatLng(spot.center);
+    recommendedSpotMarker.setTooltipContent(spot.name);
+  } else {
+    recommendedSpotMarker = L.circleMarker(spot.center, {
+      radius: 12,
+      color: "#ffffff",
+      fillColor: "#dc2626",
+      fillOpacity: 0.95,
+      weight: 4,
+      opacity: 1,
+    })
+      .bindTooltip(spot.name, { permanent: true, direction: "top", offset: [0, -12] })
+      .addTo(osakaMap);
+  }
+
+  recommendedSpotMarker.bringToFront();
 }
 
 function geoJsonToRings(geoJson) {

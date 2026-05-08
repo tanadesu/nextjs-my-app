@@ -292,6 +292,72 @@ h2 {
   background: #eef3ed;
 }
 
+.walking-character {
+  position: fixed;
+  left: 0;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 850;
+  width: clamp(84px, 13vw, 142px);
+  pointer-events: none;
+  filter: drop-shadow(0 12px 14px rgba(32, 33, 36, 0.22));
+  animation: characterWalkAcross 28s linear infinite;
+}
+
+.walking-character img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  animation:
+    characterStep 0.56s ease-in-out infinite,
+    characterWobble 0.84s ease-in-out infinite;
+}
+
+@keyframes characterWalkAcross {
+  0% {
+    transform: translateX(-160px) scaleX(1);
+  }
+  45% {
+    transform: translateX(calc(100vw + 24px)) scaleX(1);
+  }
+  50% {
+    transform: translateX(calc(100vw + 24px)) scaleX(-1);
+  }
+  95% {
+    transform: translateX(-160px) scaleX(-1);
+  }
+  100% {
+    transform: translateX(-160px) scaleX(1);
+  }
+}
+
+@keyframes characterStep {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes characterWobble {
+  0%,
+  100% {
+    rotate: -1.4deg;
+  }
+  50% {
+    rotate: 1.4deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .walking-character,
+  .walking-character img {
+    animation: none;
+  }
+}
+
 .ward-map-label {
   display: grid;
   place-items: center;

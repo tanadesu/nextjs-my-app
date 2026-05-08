@@ -3,6 +3,7 @@ const claimRadiusMeters = 300;
 const storageKey = "osaka-fill-game.visited-cells-100m-v2";
 const playerIdKey = "osaka-fill-game.player-id";
 const playerNameKey = "osaka-fill-game.player-name";
+const leaderboardDayKey = "osaka-fill-game.leaderboard-day";
 const visited = new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
 const cells = [];
 const cellLayers = new Map();
@@ -534,7 +535,8 @@ function initSharing() {
 
   supabaseClient = window.supabase.createClient(config.url, config.anonKey);
   setShareStatus("ランキングに接続しています。");
-  loadRemotePlayer()
+  checkDailyReset()
+    .then(() => loadRemotePlayer())
     .then(() => syncPlayer())
     .then(() => loadLeaderboard())
     .catch(() => setShareStatus("ランキングに接続できませんでした。"));
@@ -567,6 +569,39 @@ async function loadRemotePlayer() {
     save();
     renderState();
   }
+}
+
+async function checkDailyReset() {
+  const today = getJapanDateKey();
+
+  if (localStorage.getItem(leaderboardDayKey) !== today) {
+    visited.clear();
+    save();
+    renderState();
+    localStorage.setItem(leaderboardDayKey, today);
+  }
+
+  if (!supabaseClient) return;
+
+  const { error } = await supabaseClient.rpc("reset_daily_leaderboard", {
+    reset_day: today,
+    cell_total: cells.length,
+  });
+
+  if (error) {
+    console.warn("Daily leaderboard reset failed", error);
+    setShareStatus("日次リセット確認に失敗しました。Supabase SQLを更新してください。");
+  }
+}
+
+function getJapanDateKey(date = new Date()) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(date);
 }
 
 async function syncPlayer() {

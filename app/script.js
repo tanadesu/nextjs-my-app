@@ -38,7 +38,23 @@ const testModePanel = document.querySelector("#testModePanel");
 const testModeForm = document.querySelector("#testModeForm");
 const testModePassword = document.querySelector("#testModePassword");
 const testModeCancel = document.querySelector("#testModeCancel");
+const walkingCharacterImage = document.querySelector("#walkingCharacterImage");
 const osakaCenter = [34.66, 135.505];
+const characterBaseFrame = "osaka-character.png";
+const characterRightFrames = [
+  "migi/2.png",
+  "migi/3.png",
+  "migi/4.png",
+  "migi/5.png",
+  "migi/6.png",
+  "migi/7.png",
+  "migi/8.png",
+  "migi/9.png",
+  "migi/10.png",
+];
+const characterWalkDurationMs = 28000;
+const characterRightMoveRatio = 0.45;
+const characterFrameDurationMs = 130;
 
 if (!playerId) {
   playerId = createPlayerId();
@@ -918,6 +934,22 @@ async function bootstrap() {
   initSharing();
 }
 
+function animateWalkingCharacterFrame(timestamp = 0) {
+  if (!walkingCharacterImage) return;
+
+  const walkTime = timestamp % characterWalkDurationMs;
+  const isMovingRight = walkTime < characterWalkDurationMs * characterRightMoveRatio;
+  const nextFrame = isMovingRight
+    ? characterRightFrames[Math.floor(timestamp / characterFrameDurationMs) % characterRightFrames.length]
+    : characterBaseFrame;
+
+  if (!walkingCharacterImage.src.endsWith(nextFrame)) {
+    walkingCharacterImage.src = nextFrame;
+  }
+
+  window.requestAnimationFrame(animateWalkingCharacterFrame);
+}
+
 locateBtn.addEventListener("click", locate);
 randomBtn.addEventListener("click", suggestRandomCell);
 resetBtn.addEventListener("click", () => {
@@ -945,3 +977,4 @@ syncBtn.addEventListener("click", () => {
 });
 
 bootstrap();
+window.requestAnimationFrame(animateWalkingCharacterFrame);

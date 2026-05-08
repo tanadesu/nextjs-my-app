@@ -176,7 +176,8 @@ h2 {
   font-size: 11px;
 }
 
-.osaka-home-control {
+.osaka-home-control,
+.test-mode-control {
   display: grid;
   place-items: center;
   min-width: 42px;
@@ -191,9 +192,26 @@ h2 {
   font-weight: 900;
 }
 
-.osaka-home-control:hover {
+.osaka-home-control:hover,
+.test-mode-control:hover {
   background: #f4f0e8;
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.22);
+}
+
+.test-mode-control {
+  min-width: 54px;
+  margin-top: 6px;
+  color: #7f1d1d;
+}
+
+.test-mode-control.active {
+  color: #fff;
+  border-color: rgba(220, 38, 38, 0.35);
+  background: #dc2626;
+}
+
+.test-mode-control.active:hover {
+  background: #b91c1c;
 }
 
 .ward-map-label {

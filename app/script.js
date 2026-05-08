@@ -14,6 +14,7 @@ let currentLocationMarker = null;
 let supabaseClient = null;
 let playerId = localStorage.getItem(playerIdKey);
 let playerNameValue = localStorage.getItem(playerNameKey) || "";
+let testModeEnabled = false;
 
 const mapElement = document.querySelector("#osakaMap");
 const wardList = document.querySelector("#wardList");
@@ -330,12 +331,15 @@ function initMap() {
   });
 
   cells.forEach((cell) => {
-    const layer = L.rectangle(cell.bounds, getCellStyle(visited.has(cell.id))).addTo(osakaMap);
+    const layer = L.rectangle(cell.bounds, getCellStyle(visited.has(cell.id)))
+      .on("click", () => claimCellByTestMode(cell.id))
+      .addTo(osakaMap);
 
     cellLayers.set(cell.id, layer);
   });
 
   addOsakaHomeControl();
+  addTestModeControl();
 }
 
 function addOsakaHomeControl() {
@@ -351,6 +355,42 @@ function addOsakaHomeControl() {
     L.DomEvent.disableClickPropagation(button);
     L.DomEvent.on(button, "click", () => {
       osakaMap.setView(osakaCenter, 12);
+    });
+
+    return button;
+  };
+
+  control.addTo(osakaMap);
+}
+
+function addTestModeControl() {
+  const control = L.control({ position: "topright" });
+
+  control.onAdd = () => {
+    const button = L.DomUtil.create("button", "test-mode-control");
+    button.type = "button";
+    button.title = "テストモード";
+    button.setAttribute("aria-label", "テストモードを有効化");
+    button.textContent = "テスト";
+
+    L.DomEvent.disableClickPropagation(button);
+    L.DomEvent.on(button, "click", () => {
+      if (testModeEnabled) {
+        testModeEnabled = false;
+        button.classList.remove("active");
+        message.textContent = "テストモードを終了しました。";
+        return;
+      }
+
+      const password = window.prompt("テストモードのパスワード");
+      if (password !== "aaa") {
+        message.textContent = "パスワードが違います。";
+        return;
+      }
+
+      testModeEnabled = true;
+      button.classList.add("active");
+      message.textContent = "テストモード中です。マスをタップして制圧できます。";
     });
 
     return button;
@@ -399,6 +439,17 @@ function toggleCell(id, forceVisited = null) {
 
   save();
   renderState();
+}
+
+function claimCellByTestMode(id) {
+  if (!testModeEnabled) return;
+  const wasVisited = visited.has(id);
+
+  toggleCell(id, true);
+  message.textContent = wasVisited ? "このマスはすでに制圧済みです。" : "テストモードで1マス制圧しました。";
+  syncPlayer()
+    .then(() => loadLeaderboard())
+    .catch(() => setShareStatus("ランキング同期に失敗しました。"));
 }
 
 function claimCellsAround(latitude, longitude) {

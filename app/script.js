@@ -31,6 +31,7 @@ const playerName = document.querySelector("#playerName");
 const shareStatus = document.querySelector("#shareStatus");
 const leaderboard = document.querySelector("#leaderboard");
 const syncBtn = document.querySelector("#syncBtn");
+const testModeBtn = document.querySelector("#testModeBtn");
 const osakaCenter = [34.66, 135.505];
 
 if (!playerId) {
@@ -364,39 +365,28 @@ function addOsakaHomeControl() {
 }
 
 function addTestModeControl() {
-  const control = L.control({ position: "topright" });
+  if (!testModeBtn) return;
 
-  control.onAdd = () => {
-    const button = L.DomUtil.create("button", "test-mode-control");
-    button.type = "button";
-    button.title = "テストモード";
-    button.setAttribute("aria-label", "テストモードを有効化");
-    button.textContent = "テスト";
+  testModeBtn.addEventListener("click", () => {
+    if (testModeEnabled) {
+      testModeEnabled = false;
+      testModeBtn.classList.remove("active");
+      testModeBtn.setAttribute("aria-label", "テストモードを有効化");
+      message.textContent = "テストモードを終了しました。";
+      return;
+    }
 
-    L.DomEvent.disableClickPropagation(button);
-    L.DomEvent.on(button, "click", () => {
-      if (testModeEnabled) {
-        testModeEnabled = false;
-        button.classList.remove("active");
-        message.textContent = "テストモードを終了しました。";
-        return;
-      }
+    const password = window.prompt("テストモードのパスワード");
+    if (password !== "aaa") {
+      message.textContent = "パスワードが違います。";
+      return;
+    }
 
-      const password = window.prompt("テストモードのパスワード");
-      if (password !== "aaa") {
-        message.textContent = "パスワードが違います。";
-        return;
-      }
-
-      testModeEnabled = true;
-      button.classList.add("active");
-      message.textContent = "テストモード中です。マスをタップして制圧できます。";
-    });
-
-    return button;
-  };
-
-  control.addTo(osakaMap);
+    testModeEnabled = true;
+    testModeBtn.classList.add("active");
+    testModeBtn.setAttribute("aria-label", "テストモードを終了");
+    message.textContent = "テストモード中です。マスをタップして制圧できます。";
+  });
 }
 
 function drawStats() {

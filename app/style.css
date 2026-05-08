@@ -176,8 +176,7 @@ h2 {
   font-size: 11px;
 }
 
-.osaka-home-control,
-.test-mode-control {
+.osaka-home-control {
   display: grid;
   place-items: center;
   min-width: 42px;
@@ -192,16 +191,33 @@ h2 {
   font-weight: 900;
 }
 
-.osaka-home-control:hover,
-.test-mode-control:hover {
+.osaka-home-control:hover {
   background: #f4f0e8;
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.22);
 }
 
 .test-mode-control {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 1000;
+  display: grid;
+  place-items: center;
   min-width: 54px;
-  margin-top: 6px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 2px solid rgba(127, 29, 29, 0.2);
+  border-radius: 999px;
   color: #7f1d1d;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(32, 33, 36, 0.18);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.test-mode-control:hover {
+  background: #fff7ed;
+  box-shadow: 0 10px 28px rgba(32, 33, 36, 0.22);
 }
 
 .test-mode-control.active {

@@ -303,6 +303,10 @@ h2 {
   animation: characterWalkAcross 28s linear infinite;
 }
 
+.walking-character[hidden] {
+  display: none;
+}
+
 .walking-character img {
   display: block;
   width: 100%;

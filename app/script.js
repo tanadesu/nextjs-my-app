@@ -17,6 +17,7 @@ let supabaseClient = null;
 let playerId = localStorage.getItem(playerIdKey);
 let playerNameValue = localStorage.getItem(playerNameKey) || "";
 let testModeEnabled = false;
+let characterVisible = false;
 
 const mapElement = document.querySelector("#osakaMap");
 const wardList = document.querySelector("#wardList");
@@ -38,6 +39,7 @@ const testModePanel = document.querySelector("#testModePanel");
 const testModeForm = document.querySelector("#testModeForm");
 const testModePassword = document.querySelector("#testModePassword");
 const testModeCancel = document.querySelector("#testModeCancel");
+const walkingCharacter = document.querySelector("#walkingCharacter");
 const walkingCharacterImage = document.querySelector("#walkingCharacterImage");
 const osakaCenter = [34.66, 135.505];
 const characterBaseFrame = "osaka-character.png";
@@ -481,8 +483,14 @@ function addTestModeControl() {
 
   testModeForm?.addEventListener("submit", (event) => {
     event.preventDefault();
+    const password = testModePassword?.value.trim() || "";
 
-    if (testModePassword?.value !== "aaa") {
+    if (password === "kyara") {
+      showWalkingCharacter();
+      return;
+    }
+
+    if (password !== "aaa") {
       message.textContent = "パスワードが違います。";
       testModePassword?.select();
       return;
@@ -506,6 +514,7 @@ function closeTestModePanel() {
 
 function enableTestMode() {
   testModeEnabled = true;
+  hideWalkingCharacter();
   testModeBtn?.classList.add("active");
   testModeBtn?.setAttribute("aria-label", "テストモードを終了");
   closeTestModePanel();
@@ -518,6 +527,18 @@ function disableTestMode() {
   testModeBtn?.setAttribute("aria-label", "テストモードを有効化");
   closeTestModePanel();
   message.textContent = "テストモードを終了しました。";
+}
+
+function showWalkingCharacter() {
+  characterVisible = true;
+  if (walkingCharacter) walkingCharacter.hidden = false;
+  closeTestModePanel();
+  message.textContent = "キャラクターを表示しました。";
+}
+
+function hideWalkingCharacter() {
+  characterVisible = false;
+  if (walkingCharacter) walkingCharacter.hidden = true;
 }
 
 function renderRecommendedSpots() {
@@ -937,14 +958,16 @@ async function bootstrap() {
 function animateWalkingCharacterFrame(timestamp = 0) {
   if (!walkingCharacterImage) return;
 
-  const walkTime = timestamp % characterWalkDurationMs;
-  const isMovingRight = walkTime < characterWalkDurationMs * characterRightMoveRatio;
-  const nextFrame = isMovingRight
-    ? characterRightFrames[Math.floor(timestamp / characterFrameDurationMs) % characterRightFrames.length]
-    : characterBaseFrame;
+  if (characterVisible) {
+    const walkTime = timestamp % characterWalkDurationMs;
+    const isMovingRight = walkTime < characterWalkDurationMs * characterRightMoveRatio;
+    const nextFrame = isMovingRight
+      ? characterRightFrames[Math.floor(timestamp / characterFrameDurationMs) % characterRightFrames.length]
+      : characterBaseFrame;
 
-  if (!walkingCharacterImage.src.endsWith(nextFrame)) {
-    walkingCharacterImage.src = nextFrame;
+    if (!walkingCharacterImage.src.endsWith(nextFrame)) {
+      walkingCharacterImage.src = nextFrame;
+    }
   }
 
   window.requestAnimationFrame(animateWalkingCharacterFrame);

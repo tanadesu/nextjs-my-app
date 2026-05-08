@@ -32,6 +32,10 @@ const shareStatus = document.querySelector("#shareStatus");
 const leaderboard = document.querySelector("#leaderboard");
 const syncBtn = document.querySelector("#syncBtn");
 const testModeBtn = document.querySelector("#testModeBtn");
+const testModePanel = document.querySelector("#testModePanel");
+const testModeForm = document.querySelector("#testModeForm");
+const testModePassword = document.querySelector("#testModePassword");
+const testModeCancel = document.querySelector("#testModeCancel");
 const osakaCenter = [34.66, 135.505];
 
 if (!playerId) {
@@ -369,24 +373,58 @@ function addTestModeControl() {
 
   testModeBtn.addEventListener("click", () => {
     if (testModeEnabled) {
-      testModeEnabled = false;
-      testModeBtn.classList.remove("active");
-      testModeBtn.setAttribute("aria-label", "テストモードを有効化");
-      message.textContent = "テストモードを終了しました。";
+      disableTestMode();
       return;
     }
 
-    const password = window.prompt("テストモードのパスワード");
-    if (password !== "aaa") {
-      message.textContent = "パスワードが違います。";
-      return;
-    }
-
-    testModeEnabled = true;
-    testModeBtn.classList.add("active");
-    testModeBtn.setAttribute("aria-label", "テストモードを終了");
-    message.textContent = "テストモード中です。マスをタップして制圧できます。";
+    openTestModePanel();
   });
+
+  testModeCancel?.addEventListener("click", closeTestModePanel);
+
+  testModePanel?.addEventListener("click", (event) => {
+    if (event.target === testModePanel) closeTestModePanel();
+  });
+
+  testModeForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (testModePassword?.value !== "aaa") {
+      message.textContent = "パスワードが違います。";
+      testModePassword?.select();
+      return;
+    }
+
+    enableTestMode();
+  });
+}
+
+function openTestModePanel() {
+  if (!testModePanel || !testModePassword) return;
+  testModePassword.value = "";
+  testModePanel.hidden = false;
+  window.setTimeout(() => testModePassword.focus(), 0);
+}
+
+function closeTestModePanel() {
+  if (!testModePanel) return;
+  testModePanel.hidden = true;
+}
+
+function enableTestMode() {
+  testModeEnabled = true;
+  testModeBtn?.classList.add("active");
+  testModeBtn?.setAttribute("aria-label", "テストモードを終了");
+  closeTestModePanel();
+  message.textContent = "テストモード中です。マスをタップして制圧できます。";
+}
+
+function disableTestMode() {
+  testModeEnabled = false;
+  testModeBtn?.classList.remove("active");
+  testModeBtn?.setAttribute("aria-label", "テストモードを有効化");
+  closeTestModePanel();
+  message.textContent = "テストモードを終了しました。";
 }
 
 function drawStats() {

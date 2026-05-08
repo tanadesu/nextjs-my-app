@@ -1,4 +1,4 @@
-const cacheName = "osaka-jintorigassen-v2";
+const cacheName = "osaka-jintorigassen-v3";
 const appShell = [
   ".",
   "index.html",

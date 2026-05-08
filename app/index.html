@@ -72,6 +72,16 @@
     </main>
 
     <button id="testModeBtn" class="test-mode-control" type="button" aria-label="テストモードを有効化">テスト</button>
+    <div id="testModePanel" class="test-mode-panel" hidden>
+      <form id="testModeForm" class="test-mode-form">
+        <label for="testModePassword">テストパスワード</label>
+        <input id="testModePassword" type="password" inputmode="text" autocomplete="off" />
+        <div class="test-mode-actions">
+          <button id="testModeCancel" type="button" class="secondary">閉じる</button>
+          <button type="submit">開始</button>
+        </div>
+      </form>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

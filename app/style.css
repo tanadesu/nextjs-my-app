@@ -483,11 +483,45 @@ h2 {
 
 .ward-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 8px;
   max-height: calc(100vh - 304px);
   overflow: auto;
   padding-right: 4px;
+}
+
+.spot-card {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff8e9;
+  text-align: left;
+}
+
+.spot-card:hover {
+  background: #fff1d6;
+  box-shadow: none;
+}
+
+.spot-card span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.spot-card strong {
+  font-size: 0.95rem;
+}
+
+.spot-card small {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .ward-chip {

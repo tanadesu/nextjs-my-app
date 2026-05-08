@@ -97,6 +97,81 @@ const fallbackBoundary = {
   ],
 };
 
+const recommendedSpots = [
+  {
+    name: "大阪城公園",
+    area: "中央区",
+    center: [34.6873, 135.5262],
+    description: "天守閣と広い公園を歩きながら、周辺のマスをまとめて狙いやすい定番スポット。",
+  },
+  {
+    name: "中之島公園",
+    area: "北区",
+    center: [34.6922, 135.5048],
+    description: "川沿いの散歩で東西に移動しやすく、梅田や淀屋橋方面の制圧にもつなげやすい場所。",
+  },
+  {
+    name: "道頓堀",
+    area: "中央区",
+    center: [34.6687, 135.5013],
+    description: "大阪らしい景色を楽しみながら、なんば周辺の密集エリアを塗りやすいスポット。",
+  },
+  {
+    name: "新世界・通天閣",
+    area: "浪速区",
+    center: [34.6525, 135.5063],
+    description: "天王寺方面へも日本橋方面へも伸ばしやすく、南側の陣地づくりに使いやすい場所。",
+  },
+  {
+    name: "天王寺公園",
+    area: "天王寺区",
+    center: [34.6491, 135.5112],
+    description: "駅から近く、動物園前や四天王寺方面にも歩いて広げやすい南大阪の拠点。",
+  },
+  {
+    name: "長居公園",
+    area: "東住吉区",
+    center: [34.6127, 135.5172],
+    description: "公園内を回るだけでもまとまった範囲を取りやすく、南部の制圧率を上げやすい場所。",
+  },
+  {
+    name: "天保山・大阪港",
+    area: "港区",
+    center: [34.6546, 135.4295],
+    description: "ベイエリアを狙うならここ。海沿いの移動とセットで西側の未制圧マスを埋めやすい。",
+  },
+  {
+    name: "咲洲コスモスクエア",
+    area: "住之江区",
+    center: [34.6382, 135.4146],
+    description: "咲洲の広い区画を取りに行く起点。大阪市西端の制圧を伸ばしたい時におすすめ。",
+  },
+  {
+    name: "住吉大社",
+    area: "住吉区",
+    center: [34.6129, 135.4936],
+    description: "南西側の住宅地へ展開しやすく、まだ塗れていない端のエリアを攻めやすいスポット。",
+  },
+  {
+    name: "靱公園",
+    area: "西区",
+    center: [34.6843, 135.4932],
+    description: "本町や阿波座の間にあり、中心部の細かい未制圧マスを拾いやすい公園。",
+  },
+  {
+    name: "花博記念公園 鶴見緑地",
+    area: "鶴見区",
+    center: [34.7127, 135.5741],
+    description: "大阪市の東側を広げるのに便利。園内を歩いてまとまったマスを狙える。",
+  },
+  {
+    name: "毛馬桜之宮公園",
+    area: "都島区",
+    center: [34.7057, 135.5201],
+    description: "大川沿いを歩きながら北東側へ伸ばせる、川沿い制圧向きのスポット。",
+  },
+];
+
 const landInclusionPolygons = [
   [
     [34.760, 135.505],
@@ -428,19 +503,16 @@ function disableTestMode() {
   message.textContent = "テストモードを終了しました。";
 }
 
-function drawStats() {
+function renderRecommendedSpots() {
   wardList.innerHTML = "";
 
-  [
-    ["単位", "100mマス"],
-    ["対象", activeBoundary.name],
-    ["方式", boundarySource === "osm" ? "OSM境界+陸地判定" : "陸地マスク判定"],
-    ["除外", "境界外と海面"],
-  ].forEach(([label, value]) => {
-    const item = document.createElement("div");
-    item.className = "stat-chip";
-    item.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
-    wardList.append(item);
+  recommendedSpots.forEach((spot) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "spot-card";
+    button.innerHTML = `<span>${spot.area}</span><strong>${spot.name}</strong><small>${spot.description}</small>`;
+    button.addEventListener("click", () => focusRecommendedSpot(spot));
+    wardList.append(button);
   });
 }
 
@@ -746,15 +818,13 @@ function locate() {
 }
 
 function suggestRandomCell() {
-  const remaining = cells.filter((cell) => !visited.has(cell.id));
-  if (!remaining.length) {
-    message.textContent = "すべて塗れています。";
-    return;
-  }
+  const spot = recommendedSpots[Math.floor(Math.random() * recommendedSpots.length)];
+  focusRecommendedSpot(spot);
+}
 
-  const cell = remaining[Math.floor(Math.random() * remaining.length)];
-  message.textContent = "未制圧の候補マスへ移動しました。塗るには現地で現在地取得が必要です。";
-  if (osakaMap) osakaMap.flyTo(cell.center, 15, { duration: 0.55 });
+function focusRecommendedSpot(spot) {
+  message.textContent = `${spot.name}: ${spot.description}`;
+  if (osakaMap) osakaMap.flyTo(spot.center, 15, { duration: 0.55 });
 }
 
 function geoJsonToRings(geoJson) {
@@ -808,7 +878,7 @@ async function bootstrap() {
 
   generateCells();
   initMap();
-  drawStats();
+  renderRecommendedSpots();
   renderState();
   initSharing();
 }

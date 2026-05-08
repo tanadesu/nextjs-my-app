@@ -508,13 +508,24 @@ function renderRecommendedSpots() {
   wardList.innerHTML = "";
 
   recommendedSpots.forEach((spot) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "spot-card";
-    button.innerHTML = `<span>${spot.area}</span><strong>${spot.name}</strong><small>${spot.description}</small>`;
-    button.addEventListener("click", () => focusRecommendedSpot(spot));
-    wardList.append(button);
+    const item = document.createElement("div");
+    item.className = "spot-card";
+    item.innerHTML = `
+      <button type="button" class="spot-focus-button">
+        <span>${spot.area}</span>
+        <strong>${spot.name}</strong>
+        <small>${spot.description}</small>
+      </button>
+      <a class="route-link" href="${getGoogleMapsRouteUrl(spot)}" target="_blank" rel="noopener noreferrer">経路を見る</a>
+    `;
+    item.querySelector(".spot-focus-button").addEventListener("click", () => focusRecommendedSpot(spot));
+    wardList.append(item);
   });
+}
+
+function getGoogleMapsRouteUrl(spot) {
+  const destination = encodeURIComponent(spot.center.join(","));
+  return `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=walking`;
 }
 
 function save() {

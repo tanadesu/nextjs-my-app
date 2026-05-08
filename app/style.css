@@ -492,36 +492,68 @@ h2 {
 
 .spot-card {
   display: grid;
-  gap: 5px;
+  gap: 8px;
   width: 100%;
-  padding: 11px 12px;
+  padding: 11px;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
   background: #fff8e9;
-  text-align: left;
 }
 
 .spot-card:hover {
   background: #fff1d6;
+}
+
+.spot-focus-button {
+  display: grid;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+}
+
+.spot-focus-button:hover {
+  background: transparent;
   box-shadow: none;
 }
 
-.spot-card span {
+.spot-focus-button span {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 900;
 }
 
-.spot-card strong {
+.spot-focus-button strong {
   font-size: 0.95rem;
 }
 
-.spot-card small {
+.spot-focus-button small {
   color: var(--muted);
   font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.45;
+}
+
+.route-link {
+  display: inline-grid;
+  place-items: center;
+  justify-self: start;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: #fff;
+  background: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.route-link:hover {
+  background: #b91c1c;
 }
 
 .ward-chip {

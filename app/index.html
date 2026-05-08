@@ -48,6 +48,19 @@
           <button id="resetBtn" type="button" class="secondary">リセット</button>
         </div>
 
+        <section class="share-panel" aria-label="共有ランキング">
+          <div class="list-header">
+            <p class="label">ランキング</p>
+            <button id="syncBtn" type="button" class="text-button">同期</button>
+          </div>
+          <form id="playerForm" class="player-form">
+            <input id="playerName" type="text" maxlength="18" autocomplete="nickname" placeholder="名前" aria-label="ランキングに表示する名前" />
+            <button type="submit">保存</button>
+          </form>
+          <p id="shareStatus" class="share-status">Supabase未設定です。</p>
+          <ol id="leaderboard" class="leaderboard"></ol>
+        </section>
+
         <div class="ward-list-wrap">
           <div class="list-header">
             <p class="label">メッシュ設定</p>
@@ -59,6 +72,8 @@
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <script src="script.js"></script>
     <script>
       if ("serviceWorker" in navigator) {

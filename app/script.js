@@ -1,6 +1,8 @@
 const gridSizeMeters = 100;
 const claimRadiusMeters = 300;
 const storageKey = "osaka-fill-game.visited-cells-100m-v2";
+const playerIdKey = "osaka-fill-game.player-id";
+const playerNameKey = "osaka-fill-game.player-name";
 const visited = new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
 const cells = [];
 const cellLayers = new Map();
@@ -9,6 +11,9 @@ let osakaMap = null;
 let activeBoundary = null;
 let boundarySource = "fallback";
 let currentLocationMarker = null;
+let supabaseClient = null;
+let playerId = localStorage.getItem(playerIdKey);
+let playerNameValue = localStorage.getItem(playerNameKey) || "";
 
 const mapElement = document.querySelector("#osakaMap");
 const wardList = document.querySelector("#wardList");
@@ -20,7 +25,22 @@ const nextGoal = document.querySelector("#nextGoal");
 const locateBtn = document.querySelector("#locateBtn");
 const resetBtn = document.querySelector("#resetBtn");
 const randomBtn = document.querySelector("#randomBtn");
+const playerForm = document.querySelector("#playerForm");
+const playerName = document.querySelector("#playerName");
+const shareStatus = document.querySelector("#shareStatus");
+const leaderboard = document.querySelector("#leaderboard");
+const syncBtn = document.querySelector("#syncBtn");
 const osakaCenter = [34.66, 135.505];
+
+if (!playerId) {
+  playerId = createPlayerId();
+  localStorage.setItem(playerIdKey, playerId);
+}
+
+function createPlayerId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return `player-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
 
 const fallbackBoundary = {
   name: "大阪市内",
@@ -359,6 +379,11 @@ function save() {
   localStorage.setItem(storageKey, JSON.stringify([...visited]));
 }
 
+function getDisplayPercent(count = visited.size) {
+  const percent = cells.length ? (count / cells.length) * 100 : 0;
+  return percent < 10 && percent > 0 ? percent.toFixed(1) : Math.round(percent).toString();
+}
+
 function toggleCell(id, forceVisited = null) {
   const cell = cells.find((item) => item.id === id);
   if (!cell) return;
@@ -384,6 +409,7 @@ function claimCellsAround(latitude, longitude) {
   claimedCells.forEach((cell) => visited.add(cell.id));
   save();
   renderState();
+  syncPlayer();
 
   return newClaimCount;
 }
@@ -391,7 +417,7 @@ function claimCellsAround(latitude, longitude) {
 function renderState() {
   const count = visited.size;
   const percent = cells.length ? (count / cells.length) * 100 : 0;
-  const displayPercent = percent < 10 && percent > 0 ? percent.toFixed(1) : Math.round(percent).toString();
+  const displayPercent = getDisplayPercent(count);
   visitedCount.textContent = `${displayPercent}%`;
   totalCount.textContent = "制圧率";
   progressBar.style.width = `${percent}%`;
@@ -415,6 +441,123 @@ function renderState() {
   } else {
     message.textContent = `現在の制圧率は${displayPercent}%です。海上のマスは生成しない設定です。`;
   }
+}
+
+function initSharing() {
+  playerName.value = playerNameValue;
+
+  const config = window.SUPABASE_CONFIG || {};
+  if (!config.url || !config.anonKey || !window.supabase) {
+    setShareStatus("Supabase未設定です。名前と制圧状況はこの端末だけに保存されます。");
+    renderLeaderboard([]);
+    return;
+  }
+
+  supabaseClient = window.supabase.createClient(config.url, config.anonKey);
+  setShareStatus("ランキングに接続しています。");
+  loadRemotePlayer()
+    .then(() => syncPlayer())
+    .then(() => loadLeaderboard())
+    .catch(() => setShareStatus("ランキングに接続できませんでした。"));
+}
+
+function setShareStatus(text) {
+  shareStatus.textContent = text;
+}
+
+async function loadRemotePlayer() {
+  if (!supabaseClient) return;
+
+  const { data, error } = await supabaseClient
+    .from("players")
+    .select("name, claimed_cells")
+    .eq("id", playerId)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return;
+
+  if (!playerNameValue && data.name) {
+    playerNameValue = data.name;
+    playerName.value = data.name;
+    localStorage.setItem(playerNameKey, data.name);
+  }
+
+  if (Array.isArray(data.claimed_cells)) {
+    data.claimed_cells.forEach((id) => visited.add(id));
+    save();
+    renderState();
+  }
+}
+
+async function syncPlayer() {
+  if (!supabaseClient) return;
+
+  const name = getPlayerName();
+  const claimedCount = visited.size;
+  const percent = cells.length ? Number(((claimedCount / cells.length) * 100).toFixed(2)) : 0;
+
+  const { error } = await supabaseClient.from("players").upsert({
+    id: playerId,
+    name,
+    claimed_cells: [...visited],
+    claimed_count: claimedCount,
+    total_cells: cells.length,
+    percent,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) throw error;
+  setShareStatus("ランキングを同期しました。");
+}
+
+async function loadLeaderboard() {
+  if (!supabaseClient) return;
+
+  const { data, error } = await supabaseClient
+    .from("players")
+    .select("id, name, claimed_count, total_cells, percent, updated_at")
+    .order("percent", { ascending: false })
+    .order("claimed_count", { ascending: false })
+    .limit(20);
+
+  if (error) throw error;
+  renderLeaderboard(data || []);
+}
+
+function getPlayerName() {
+  return playerNameValue || "名無しの武将";
+}
+
+function renderLeaderboard(rows) {
+  leaderboard.innerHTML = "";
+
+  if (!rows.length) {
+    const item = document.createElement("li");
+    item.className = "leaderboard-empty";
+    item.textContent = supabaseClient ? "まだランキングがありません。" : "Supabase設定後に表示されます。";
+    leaderboard.append(item);
+    return;
+  }
+
+  rows.forEach((row, index) => {
+    const item = document.createElement("li");
+    item.className = row.id === playerId ? "leaderboard-row current-player" : "leaderboard-row";
+
+    const rank = document.createElement("span");
+    rank.className = "leaderboard-rank";
+    rank.textContent = `${index + 1}`;
+
+    const name = document.createElement("strong");
+    name.textContent = row.name || "名無しの武将";
+
+    const score = document.createElement("span");
+    score.className = "leaderboard-score";
+    score.textContent = `${Number(row.percent || 0).toFixed(1)}%`;
+
+    item.append(rank, name, score);
+    leaderboard.append(item);
+  });
 }
 
 function findCellByPosition(latitude, longitude) {
@@ -553,6 +696,7 @@ async function bootstrap() {
   initMap();
   drawStats();
   renderState();
+  initSharing();
 }
 
 locateBtn.addEventListener("click", locate);
@@ -561,6 +705,24 @@ resetBtn.addEventListener("click", () => {
   visited.clear();
   save();
   renderState();
+  syncPlayer()
+    .then(() => loadLeaderboard())
+    .catch(() => setShareStatus("ランキング同期に失敗しました。"));
+});
+
+playerForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  playerNameValue = playerName.value.trim().slice(0, 18);
+  localStorage.setItem(playerNameKey, playerNameValue);
+  syncPlayer()
+    .then(() => loadLeaderboard())
+    .catch(() => setShareStatus("名前の保存に失敗しました。"));
+});
+
+syncBtn.addEventListener("click", () => {
+  syncPlayer()
+    .then(() => loadLeaderboard())
+    .catch(() => setShareStatus("ランキング同期に失敗しました。"));
 });
 
 bootstrap();

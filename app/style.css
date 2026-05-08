@@ -298,15 +298,13 @@ h2 {
   bottom: max(14px, env(safe-area-inset-bottom));
   z-index: 850;
   width: clamp(84px, 13vw, 142px);
-  aspect-ratio: 1;
   pointer-events: none;
   filter: drop-shadow(0 12px 14px rgba(32, 33, 36, 0.22));
   animation: characterWalkAcross 28s linear infinite;
 }
 
 .walking-character img {
-  position: absolute;
-  inset: 0;
+  display: block;
   width: 100%;
   height: auto;
   border-radius: 10px;
@@ -315,43 +313,21 @@ h2 {
     characterWobble 0.84s ease-in-out infinite;
 }
 
-.character-right {
-  opacity: 1;
-}
-
-.character-left {
-  opacity: 0;
-}
-
-.walking-character .character-right {
-  animation:
-    characterStep 0.56s ease-in-out infinite,
-    characterWobble 0.84s ease-in-out infinite,
-    characterRightVisibility 28s linear infinite;
-}
-
-.walking-character .character-left {
-  animation:
-    characterStep 0.56s ease-in-out infinite,
-    characterWobble 0.84s ease-in-out infinite,
-    characterLeftVisibility 28s linear infinite;
-}
-
 @keyframes characterWalkAcross {
   0% {
-    transform: translateX(-160px);
+    transform: translateX(-160px) scaleX(1);
   }
   45% {
-    transform: translateX(calc(100vw + 24px));
+    transform: translateX(calc(100vw + 24px)) scaleX(1);
   }
   50% {
-    transform: translateX(calc(100vw + 24px));
+    transform: translateX(calc(100vw + 24px)) scaleX(-1);
   }
   95% {
-    transform: translateX(-160px);
+    transform: translateX(-160px) scaleX(-1);
   }
   100% {
-    transform: translateX(-160px);
+    transform: translateX(-160px) scaleX(1);
   }
 }
 
@@ -372,30 +348,6 @@ h2 {
   }
   50% {
     rotate: 1.4deg;
-  }
-}
-
-@keyframes characterRightVisibility {
-  0%,
-  49.9%,
-  100% {
-    opacity: 1;
-  }
-  50%,
-  99.9% {
-    opacity: 0;
-  }
-}
-
-@keyframes characterLeftVisibility {
-  0%,
-  49.9%,
-  100% {
-    opacity: 0;
-  }
-  50%,
-  99.9% {
-    opacity: 1;
   }
 }
 

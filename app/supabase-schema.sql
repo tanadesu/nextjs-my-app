@@ -62,13 +62,7 @@ begin
     return 'already_reset';
   end if;
 
-  update public.players
-  set
-    claimed_cells = '{}',
-    claimed_count = 0,
-    total_cells = cell_total,
-    percent = 0,
-    updated_at = now();
+  delete from public.players;
 
   insert into public.game_state (key, value, updated_at)
   values ('leaderboard_reset_day', reset_day, now())

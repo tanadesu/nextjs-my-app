@@ -658,7 +658,7 @@ function initSharing() {
   setShareStatus("ランキングに接続しています。");
   checkDailyReset()
     .then(() => loadRemotePlayer())
-    .then(() => syncPlayer())
+    .then((hasRemotePlayer) => (hasRemotePlayer ? syncPlayer() : undefined))
     .then(() => loadLeaderboard())
     .catch(() => setShareStatus("ランキングに接続できませんでした。"));
 }
@@ -677,7 +677,7 @@ async function loadRemotePlayer() {
     .maybeSingle();
 
   if (error) throw error;
-  if (!data) return;
+  if (!data) return false;
 
   if (!playerNameValue && data.name) {
     playerNameValue = data.name;
@@ -690,6 +690,8 @@ async function loadRemotePlayer() {
     save();
     renderState();
   }
+
+  return true;
 }
 
 async function checkDailyReset() {

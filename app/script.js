@@ -713,8 +713,51 @@ async function checkDailyReset() {
 
   if (error) {
     console.warn("Daily leaderboard reset failed", error);
-    setShareStatus("日次リセット確認に失敗しました。Supabase SQLを更新してください。");
+    const fallbackSucceeded = await resetDailyLeaderboardFromClient(today);
+    if (!fallbackSucceeded) {
+      setShareStatus("日次リセット確認に失敗しました。Supabase SQLを更新してください。");
+    }
   }
+}
+
+async function resetDailyLeaderboardFromClient(today) {
+  if (!supabaseClient) return false;
+
+  const { data: state, error: stateError } = await supabaseClient
+    .from("game_state")
+    .select("value")
+    .eq("key", "leaderboard_reset_day")
+    .maybeSingle();
+
+  if (stateError) {
+    console.warn("Daily reset state check failed", stateError);
+    return false;
+  }
+
+  if (state?.value === today) return true;
+
+  const { error: deleteError } = await supabaseClient
+    .from("players")
+    .delete()
+    .neq("id", "__never_match__");
+
+  if (deleteError) {
+    console.warn("Daily leaderboard client reset failed", deleteError);
+    return false;
+  }
+
+  const { error: upsertError } = await supabaseClient.from("game_state").upsert({
+    key: "leaderboard_reset_day",
+    value: today,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (upsertError) {
+    console.warn("Daily reset state update failed", upsertError);
+    return false;
+  }
+
+  return true;
 }
 
 function getJapanDateKey(date = new Date()) {

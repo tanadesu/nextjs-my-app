@@ -36,11 +36,30 @@ to anon
 using (true)
 with check (true);
 
+drop policy if exists "players can delete rows" on public.players;
+create policy "players can delete rows"
+on public.players for delete
+to anon
+using (true);
+
 drop policy if exists "game state can be read" on public.game_state;
 create policy "game state can be read"
 on public.game_state for select
 to anon
 using (true);
+
+drop policy if exists "game state can be inserted" on public.game_state;
+create policy "game state can be inserted"
+on public.game_state for insert
+to anon
+with check (true);
+
+drop policy if exists "game state can be updated" on public.game_state;
+create policy "game state can be updated"
+on public.game_state for update
+to anon
+using (true)
+with check (true);
 
 create or replace function public.reset_daily_leaderboard(reset_day text, cell_total integer)
 returns text

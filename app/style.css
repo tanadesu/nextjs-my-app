@@ -576,12 +576,30 @@ h2 {
 }
 
 .meeting-spot-card {
-  border-color: rgba(220, 38, 38, 0.38);
+  border: 2px solid #dc2626;
   background: #fff0e7;
+  box-shadow: 0 10px 26px rgba(220, 38, 38, 0.16);
 }
 
 .meeting-spot-card:hover {
   background: #ffe7d7;
+}
+
+.meeting-spot-card .spot-focus-button span {
+  display: inline-grid;
+  place-items: center;
+  justify-self: start;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  color: #fff;
+  background: #dc2626;
+  font-size: 0.78rem;
+}
+
+.meeting-spot-card .spot-focus-button strong {
+  color: #7f1d1d;
+  font-size: 1.08rem;
 }
 
 .spot-focus-button {
@@ -608,6 +626,12 @@ h2 {
 
 .spot-focus-button strong {
   font-size: 0.95rem;
+}
+
+.spot-focus-button b {
+  color: #dc2626;
+  font-size: 1rem;
+  font-weight: 900;
 }
 
 .spot-focus-button small {

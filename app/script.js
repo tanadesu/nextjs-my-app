@@ -119,9 +119,10 @@ const fallbackBoundary = {
 const recommendedSpots = [
   {
     name: "Hotel The Day Osaka",
-    area: "集合場所",
+    area: "集合場所・17時45分",
     center: [34.664676, 135.390562],
     address: "大阪市此花区北港緑地2-3-75",
+    meetingTime: "集合時間 17:45",
     routeQuery: "Hotel The Day Osaka 大阪市此花区北港緑地2-3-75",
     routeMode: "transit",
     isMeetingPlace: true,
@@ -561,6 +562,7 @@ function renderRecommendedSpots() {
       <button type="button" class="spot-focus-button">
         <span>${spot.area}</span>
         <strong>${spot.name}</strong>
+        ${spot.meetingTime ? `<b>${spot.meetingTime}</b>` : ""}
         <small>${spot.description}</small>
         ${spot.address ? `<em>${spot.address}</em>` : ""}
       </button>

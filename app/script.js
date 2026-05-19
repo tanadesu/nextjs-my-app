@@ -118,6 +118,16 @@ const fallbackBoundary = {
 
 const recommendedSpots = [
   {
+    name: "Hotel The Day Osaka",
+    area: "集合場所",
+    center: [34.664676, 135.390562],
+    address: "大阪市此花区北港緑地2-3-75",
+    routeQuery: "Hotel The Day Osaka 大阪市此花区北港緑地2-3-75",
+    routeMode: "transit",
+    isMeetingPlace: true,
+    description: "集合場所はこのホテルです。JR桜島駅から舞洲アクティブバスで約15分、「The Day Osaka前」下車すぐです。",
+  },
+  {
     name: "大阪城公園",
     area: "中央区",
     center: [34.6873, 135.5262],
@@ -546,14 +556,15 @@ function renderRecommendedSpots() {
 
   recommendedSpots.forEach((spot) => {
     const item = document.createElement("div");
-    item.className = "spot-card";
+    item.className = spot.isMeetingPlace ? "spot-card meeting-spot-card" : "spot-card";
     item.innerHTML = `
       <button type="button" class="spot-focus-button">
         <span>${spot.area}</span>
         <strong>${spot.name}</strong>
         <small>${spot.description}</small>
+        ${spot.address ? `<em>${spot.address}</em>` : ""}
       </button>
-      <a class="route-link" href="${getGoogleMapsRouteUrl(spot)}" target="_blank" rel="noopener noreferrer">経路を見る</a>
+      <a class="route-link" href="${getGoogleMapsRouteUrl(spot)}" target="_blank" rel="noopener noreferrer">${spot.isMeetingPlace ? "ここへの行き方" : "経路を見る"}</a>
     `;
     item.querySelector(".spot-focus-button").addEventListener("click", () => focusRecommendedSpot(spot));
     wardList.append(item);
@@ -561,8 +572,9 @@ function renderRecommendedSpots() {
 }
 
 function getGoogleMapsRouteUrl(spot) {
-  const destination = encodeURIComponent(spot.center.join(","));
-  return `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=walking`;
+  const destination = encodeURIComponent(spot.routeQuery || spot.center.join(","));
+  const travelMode = spot.routeMode || "walking";
+  return `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=${travelMode}`;
 }
 
 function save() {

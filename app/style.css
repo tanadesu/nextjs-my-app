@@ -575,6 +575,15 @@ h2 {
   background: #fff1d6;
 }
 
+.meeting-spot-card {
+  border-color: rgba(220, 38, 38, 0.38);
+  background: #fff0e7;
+}
+
+.meeting-spot-card:hover {
+  background: #ffe7d7;
+}
+
 .spot-focus-button {
   display: grid;
   gap: 5px;
@@ -606,6 +615,13 @@ h2 {
   font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.45;
+}
+
+.spot-focus-button em {
+  color: #7f1d1d;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 900;
 }
 
 .route-link {

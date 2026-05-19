@@ -648,10 +648,15 @@ h2 {
   font-weight: 900;
 }
 
+.spot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .route-link {
   display: inline-grid;
   place-items: center;
-  justify-self: start;
   min-height: 32px;
   padding: 0 10px;
   border-radius: 999px;
@@ -664,6 +669,16 @@ h2 {
 
 .route-link:hover {
   background: #b91c1c;
+}
+
+.secondary-route-link {
+  color: #7f1d1d;
+  background: #fff;
+  border: 1px solid rgba(220, 38, 38, 0.28);
+}
+
+.secondary-route-link:hover {
+  background: #ffe7d7;
 }
 
 .ward-chip {

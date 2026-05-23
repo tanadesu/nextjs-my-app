@@ -815,6 +815,7 @@ async function loadLeaderboard() {
   const { data, error } = await supabaseClient
     .from("players")
     .select("id, name, claimed_count, total_cells, percent, updated_at")
+    .gt("claimed_count", 0)
     .order("percent", { ascending: false })
     .order("claimed_count", { ascending: false })
     .limit(20);

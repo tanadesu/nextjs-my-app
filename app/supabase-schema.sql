@@ -81,7 +81,8 @@ begin
     return 'already_reset';
   end if;
 
-  delete from public.players;
+  delete from public.players
+  where id <> '__never_match__';
 
   insert into public.game_state (key, value, updated_at)
   values ('leaderboard_reset_day', reset_day, now())

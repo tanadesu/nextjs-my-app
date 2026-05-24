@@ -681,6 +681,67 @@ h2 {
   background: #ffe7d7;
 }
 
+.bus-image-button {
+  border: 0;
+  cursor: pointer;
+}
+
+.bus-image-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.bus-image-panel[hidden] {
+  display: none;
+}
+
+.bus-image-dialog {
+  width: min(100%, 920px);
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 18px 52px rgba(15, 23, 42, 0.32);
+}
+
+.bus-image-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #fff8e9;
+}
+
+.bus-image-header strong {
+  font-size: 0.95rem;
+}
+
+.bus-image-header button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: #dc2626;
+  font-weight: 900;
+}
+
+.bus-image-dialog img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .ward-chip {
   display: flex;
   align-items: center;

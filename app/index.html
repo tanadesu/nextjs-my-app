@@ -87,6 +87,16 @@
       </form>
     </div>
 
+    <div id="busImagePanel" class="bus-image-panel" hidden>
+      <div class="bus-image-dialog" role="dialog" aria-modal="true" aria-label="桜島駅発バスの最終便">
+        <div class="bus-image-header">
+          <strong>桜島駅発バスの最終便</strong>
+          <button id="busImageClose" type="button" aria-label="閉じる">閉じる</button>
+        </div>
+        <img src="sakurajima-bus.jpg" alt="桜島駅発バスの最終便" />
+      </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>

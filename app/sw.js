@@ -1,4 +1,4 @@
-const cacheName = "osaka-jintorigassen-v21";
+const cacheName = "osaka-jintorigassen-v22";
 const appShell = [
   ".",
   "index.html",
@@ -6,6 +6,7 @@ const appShell = [
   "script.js",
   "manifest.webmanifest",
   "supabase-config.js",
+  "sakurajima-bus.jpg",
   "osaka-character.png",
   "migi/2.png",
   "migi/3.png",

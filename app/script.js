@@ -39,6 +39,8 @@ const testModePanel = document.querySelector("#testModePanel");
 const testModeForm = document.querySelector("#testModeForm");
 const testModePassword = document.querySelector("#testModePassword");
 const testModeCancel = document.querySelector("#testModeCancel");
+const busImagePanel = document.querySelector("#busImagePanel");
+const busImageClose = document.querySelector("#busImageClose");
 const walkingCharacter = document.querySelector("#walkingCharacter");
 const walkingCharacterImage = document.querySelector("#walkingCharacterImage");
 const osakaCenter = [34.66, 135.505];
@@ -126,6 +128,7 @@ const recommendedSpots = [
     routeQuery: "Hotel The Day Osaka 大阪市此花区北港緑地2-3-75",
     routeMode: "transit",
     busLink: "https://www.jorudan.co.jp/bus/rosen/stoplist/?Ddd=3&Dhh=18&Dmn=5&Dym=202606&jyosya=%E8%A5%BF%E4%B9%9D%E6%9D%A1&lid=1663265#jump",
+    busImage: "sakurajima-bus.jpg",
     isMeetingPlace: true,
     description: "集合場所はこのホテルです。JR桜島駅から舞洲アクティブバスで約15分、「The Day Osaka前」下車すぐです。",
   },
@@ -570,11 +573,23 @@ function renderRecommendedSpots() {
       <div class="spot-links">
         <a class="route-link" href="${getGoogleMapsRouteUrl(spot)}" target="_blank" rel="noopener noreferrer">${spot.isMeetingPlace ? "ここへの行き方" : "経路を見る"}</a>
         ${spot.busLink ? `<a class="route-link secondary-route-link" href="${spot.busLink}" target="_blank" rel="noopener noreferrer">西九条駅発バスの最終便</a>` : ""}
+        ${spot.busImage ? `<button type="button" class="route-link bus-image-button">桜島駅発バスの最終便</button>` : ""}
       </div>
     `;
     item.querySelector(".spot-focus-button").addEventListener("click", () => focusRecommendedSpot(spot));
+    item.querySelector(".bus-image-button")?.addEventListener("click", openBusImagePanel);
     wardList.append(item);
   });
+}
+
+function openBusImagePanel() {
+  if (!busImagePanel) return;
+  busImagePanel.hidden = false;
+}
+
+function closeBusImagePanel() {
+  if (!busImagePanel) return;
+  busImagePanel.hidden = true;
 }
 
 function getGoogleMapsRouteUrl(spot) {
@@ -1061,6 +1076,11 @@ syncBtn.addEventListener("click", () => {
   syncPlayer()
     .then(() => loadLeaderboard())
     .catch(() => setShareStatus("ランキング同期に失敗しました。"));
+});
+
+busImageClose?.addEventListener("click", closeBusImagePanel);
+busImagePanel?.addEventListener("click", (event) => {
+  if (event.target === busImagePanel) closeBusImagePanel();
 });
 
 bootstrap();

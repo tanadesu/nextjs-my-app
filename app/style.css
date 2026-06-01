@@ -416,7 +416,7 @@ h2 {
 
 .actions {
   display: grid;
-  grid-template-columns: 1fr 104px;
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 

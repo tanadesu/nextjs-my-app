@@ -27,7 +27,6 @@ const progressBar = document.querySelector("#progressBar");
 const message = document.querySelector("#message");
 const nextGoal = document.querySelector("#nextGoal");
 const locateBtn = document.querySelector("#locateBtn");
-const resetBtn = document.querySelector("#resetBtn");
 const randomBtn = document.querySelector("#randomBtn");
 const playerForm = document.querySelector("#playerForm");
 const playerName = document.querySelector("#playerName");
@@ -1061,14 +1060,6 @@ function animateWalkingCharacterFrame(timestamp = 0) {
 
 locateBtn.addEventListener("click", locate);
 randomBtn.addEventListener("click", suggestRandomCell);
-resetBtn.addEventListener("click", () => {
-  visited.clear();
-  save();
-  renderState();
-  syncPlayer()
-    .then(() => loadLeaderboard())
-    .catch(() => setShareStatus("ランキング同期に失敗しました。"));
-});
 
 playerForm.addEventListener("submit", (event) => {
   event.preventDefault();

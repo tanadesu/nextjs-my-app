@@ -126,7 +126,7 @@ const recommendedSpots = [
     meetingTime: "集合時間 18:45",
     routeQuery: "Hotel The Day Osaka 大阪市此花区北港緑地2-3-75",
     routeMode: "transit",
-    busLink: "https://www.jorudan.co.jp/bus/rosen/stoplist/?Ddd=3&Dhh=18&Dmn=5&Dym=202606&jyosya=%E8%A5%BF%E4%B9%9D%E6%9D%A1&lid=1663265#jump",
+    busLink: "https://www.jorudan.co.jp/bus/rosen/stoplist/?Ddd=3&Dhh=18&Dmn=5&Dym=202606&jyosya=%E8%A5%BF%E4%B9%9D%E6%9D%A1&lid=1663245#jump",
     busImage: "sakurajima-bus.jpg",
     isMeetingPlace: true,
     description: "集合場所はこのホテルです。JR桜島駅から舞洲アクティブバスで約15分、「The Day Osaka前」下車すぐです。",
